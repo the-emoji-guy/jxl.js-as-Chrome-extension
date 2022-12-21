@@ -1,3 +1,38 @@
+# JXL.js (as a Chrome extension)
+
+This is an experimental extension that converts any JXL (JPEG XL) image file in the page to WEBP.
+
+It uses the following code for conversion:
+* https://github.com/niutech/jxl.js
+
+Code has been slightly modified to work in a 'browser-extension' environment.
+
+<br>
+
+Limitations:
+* Conversion may take a couple of seconds, especially for large images.
+* No support for animated JXL files. Only the first frame is rendered.
+* May cause some pages to not load at all. If this happens, please uninstall the extension.
+
+<br>
+
+This is a work in progress. More explanation on use cases, tips, and workarounds here: 
+* https://r360v.blogspot.com/p/jace.html
+
+# Installing
+
+1. Go to the Releases page and download the ZIP file.
+1. Extract to a local directory.
+1. Follow the installation instructions here:
+* https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#load-unpacked
+
+After installation, the extension should run automatically on every page.
+
+<br>
+
+Read the original description below ⬇ :
+<hr>
+
 # JXL.js
 
 This is a JPEG XL decoder in JavaScript using WebAssembly implementation from the [Squoosh](https://github.com/GoogleChromeLabs/squoosh) app running in Web Worker.
