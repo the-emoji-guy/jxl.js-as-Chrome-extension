@@ -5,8 +5,8 @@
   "manifest_version": 3,
   "icons": {
        "16": "logo/16x16.png",
-	   "19": "logo/19x19.png",
-	   "38": "logo/38x38.png",
+       "19": "logo/19x19.png",
+       "38": "logo/38x38.png",
        "48": "logo/48x48.png",
       "128": "logo/128x128.png"
   },
