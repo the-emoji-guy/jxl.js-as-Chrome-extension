@@ -131,10 +131,10 @@ var Base64edWASM;
             throw t(e), e
         }
 
-        function X(n) {  
+        function X(n) {
             return n.startsWith("data:application/octet-stream;base64,")
         }
-        if (n.preloadedImages = {}, n.preloadedAudios = {}, n.locateFile) {  
+        if (n.preloadedImages = {}, n.preloadedAudios = {}, n.locateFile) {
             var nn, nr = Base64edWASM;
             !X(nr) && (nr = (nn = nr, n.locateFile ? n.locateFile(nn, C) : C + nn))
         } else var nr = Base64edWASM;
@@ -861,9 +861,9 @@ var Base64edWASM;
     addEventListener("message", async a => {
 
      // make the Base64 string of the converted WASM available to the other functions
-        Base64edWASM = a.data.Base64edWASM;
-		
-        if (a.data.image) {		
+        Base64edWASM = await a.data.Base64edWASM;
+
+        if (a.data.image) {
             let s = performance.now(),
                 t = (await Module({
                     noInitialRun: !0
@@ -891,11 +891,16 @@ var Base64edWASM;
 }
 
 
-// Code required since the normal worker start "window"  
+// Code required since the normal worker start "window"
 // is usually not part of the web worker declaration.
 // If you load this file directly using `new Worker`,
 // the worker code should now execute properly.
 
 if (window != self) {
     worker_function();
-} 
+}
+
+// This code introduces a short delay that allows the
+// worker to get the message in full before doing
+// any processing.
+try { console.log(Base64edWASM); } catch(e) { console.log("Images found! Let's start decoding..."); }

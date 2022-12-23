@@ -1,16 +1,16 @@
 (function () {
-  "use strict";
+   "use strict";
 
-// Start by converting the WASM to Base64 
+// Start by converting the WASM to Base64
 // so we can send it to our worker file
-   var Base64edWASM; 
+   var Base64edWASM;
    convertWASMtoBase64();
-	
+
 // jpeg/png/webp :: webp selected to preserve transparency
 // useCache set as true to allow faster loading times on page revisits
    const config = {
      useCache: true,
-     imageType: 'webp' 
+     imageType: 'webp'
    };
 
   let cache, workers = {};
@@ -24,12 +24,12 @@
       workers[jxlSrc].postMessage({canvas, imgData, imageType: config.imageType}, [canvas]);
       workers[jxlSrc].addEventListener('message', m => {
         if (m.data.url && m.data.blob) {
-	   // Required to display images coded in Base64
-		  var newIMGsrc = URL.createObjectURL(m.data.blob);
+        // Required to display images coded in Base64
+          var newIMGsrc = URL.createObjectURL(m.data.blob);
           dataURLToSrc(img, newIMGsrc, isCSS, isSource);
-		  if(jxlSrc.includes('base64')) { return; } ; 
+          if(jxlSrc.includes('base64')) { return; } ;
           config.useCache && cache && cache.put(jxlSrc, new Response(m.data.blob));
-        }		
+        }
       });
     } else {
       const canvas = document.createElement('canvas');
@@ -54,7 +54,7 @@
   }
 
   async function decode(img, isCSS, isSource) {
- // Added img.src as a parameter	  
+//  Added img.src as a parameter
     const jxlSrc = img.dataset.jxlSrc = isCSS ? getComputedStyle(img).backgroundImage.slice(5, -2) : isSource ? img.srcset : (img.currentSrc.length === 0) ? img.src : img.currentSrc;
     if (!isCSS && !isSource) {
       img.srcset = '';
@@ -71,14 +71,15 @@
         return;
       }
     }
-	
- // if source image is null, do not continue
+
+//  if source image is null, do not continue
     if (jxlSrc.includes('null')) { console.log('null line68'); return; };
-		
+
     const res = await fetch(jxlSrc);
     const image = await res.arrayBuffer();
 
-
+//  Loading Workers from local files is not supported
+//  so we have to use another method
     workers[jxlSrc] = new Worker(URL.createObjectURL(new Blob(["("+worker_function.toString()+")()"], {type: 'text/javascript'})));
     workers[jxlSrc].postMessage({jxlSrc, image, Base64edWASM});
     workers[jxlSrc].addEventListener('message', m => m.data.imgData && requestAnimationFrame(() => imgDataToDataURL(img, m.data.imgData, isCSS, isSource)));
@@ -90,7 +91,7 @@
     else if (el instanceof HTMLSourceElement && el.srcset.endsWith('.jxl'))
       decode(el, false, true);
  // Also convert inline images encoded in Base64
-    else if (el instanceof HTMLImageElement && el.src.includes('image/jxl'))
+    else if (el instanceof HTMLImageElement && el.src.includes('image/jxl;base64'))
       decode(el, false, false);
     else if (el instanceof Element && getComputedStyle(el).backgroundImage.endsWith('.jxl")'))
       decode(el, true, false);
@@ -98,9 +99,10 @@
 
 
 // ~~~~~~~~ CUSTOM CODE STARTS HERE ~~~~~~~~~~~~~~~~~~~
-  
-async function convertWASMtoBase64() {
-	const url = chrome.runtime.getURL("jxl_dec.wasm"); 
+
+// Convert WASM file to a Base64 string
+   async function convertWASMtoBase64() {
+    const url = chrome.runtime.getURL("jxl_dec.wasm");
     const response = await fetch(url);
     const blob = await response.blob();
     const reader = new FileReader();
@@ -109,31 +111,30 @@ async function convertWASMtoBase64() {
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
-	Base64edWASM = reader.result.replace(/wasm;/, 'octet-stream;');
+     Base64edWASM = reader.result.replace(/wasm;/, 'octet-stream;');
     return reader.result.replace(/wasm;/, 'octet-stream;');
-  }
- 
-function lookForOthers() {
-	var highlightedItems = document.querySelectorAll("img[src*='jxl']");
-	highlightedItems.forEach((userItem) => {
-		if( userItem.classList.contains("alreadyConverted") ) 
-			{ 
-			return; 
-			} else {
-			   userItem.classList.add("alreadyConverted");  
-			   decode(userItem, false);
-		     }
-		});
-};
+   }
 
+// Convert possibly missed images
+   function lookForOthers() {
+     var MissedItems = document.querySelectorAll("img[src*='jxl']");
+     MissedItems.forEach((userItem) => {
+       if( userItem.classList.contains("alreadyConverted") )
+         { return; } else {
+           userItem.classList.add("alreadyConverted");
+           decode(userItem, false);
+           }
+         });
+   };
 
-document.addEventListener("click", e => {
-  const origin = e.target.closest("a");
-  if (origin) {
-    const href = origin.href;
-	lookForOthers();
-	setTimeout(() => { lookForOthers() }, 1000);
-  }
-});
-  
+// Run script again when user clicks an anchored link
+   document.addEventListener("click", e => {
+    const origin = e.target.closest("a");
+    if (origin) {
+        const href = origin.href;
+         lookForOthers();
+         setTimeout(() => { lookForOthers() }, 1000);
+       }
+    });
+
 }());
