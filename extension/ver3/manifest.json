@@ -1,0 +1,30 @@
+{
+  "name": "Add JXL support",
+  "version": "1.0",
+  "description": "Converts inline JXL images to WEBP so you can view them in the browser",
+  "manifest_version": 3,
+  "icons": {
+       "16": "logo/16x16.png",
+       "19": "logo/19x19.png",
+       "38": "logo/38x38.png",
+       "48": "logo/48x48.png",
+      "128": "logo/128x128.png"
+  },
+  "web_accessible_resources": [{
+     "resources": ["jxl_dec.wasm","jxl_dec.html"],
+     "matches":   ["<all_urls>"]
+    }],
+  "content_scripts": [{
+     "js":      ["addJXLsupport.js"],
+     "matches": ["<all_urls>"],
+     "run_at":  "document_start"
+      }],
+  "sandbox": {
+     "pages": ["jxl_dec.html"],
+	 "resources": ["jxl_dec.wasm","jxl_dec.html"]
+  },
+"content_security_policy": {
+   "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self' 'unsafe-inline' data: blob:;"
+	},
+  "key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv3I99om3PcuRSPwDbNxFqHtBPRl+Wcp23DYg6VT6pKdiHSE8EMB3/JNktBBRlb7Fu2gxUi86wx+oKgpHBg36LzkwBXLzo0OB7IwxnM6yibypFT4ZqoevtrCi00yXP08f5/Q7K6qoivFmctpANUBmA2UFDb2Ck9UZ4UZDlHEXfH0MIZ1eaPa2qgKM2Rev+wDrtvG6mHFj8wQEOcgmtTgk3sk246bX8/ApssUl1PFbPG6v8AaI9GvRLs6YJfBjEPFRn+8ZMXjthErrtNPzpLCsw7avYIzZ2ch3DnqW4vds2kABvLOb1OOxuQHAnxl4xjn3NCX36BQIYx5A/LAhSIYxcwIDAQAB"	
+}
