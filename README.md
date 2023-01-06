@@ -1,6 +1,11 @@
 # JXL.js (as a Chrome extension)
 
-This is an experimental extension that converts any JXL (JPEG XL) image file in the page to WEBP.
+This is an experimental Chrome extension that converts any JXL (JPEG XL) image file in the page to WEBP.
+
+Published here:
+* https://chrome.google.com/webstore/detail/add-jxl-support/khacgjhalljalcbfehknlagpjgjcgoej
+
+<br>
 
 It uses the following code for conversion:
 * https://github.com/niutech/jxl.js
